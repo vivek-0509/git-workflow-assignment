@@ -1,0 +1,5 @@
+# local server and browser console logs
+*.log
+
+# my rough work, never meant to be committed
+scratch/
