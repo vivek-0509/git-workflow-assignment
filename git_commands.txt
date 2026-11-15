@@ -1,0 +1,127 @@
+StudyLog - Git command log
+Vivek Singh Solanki (2024EB02480)
+Repo: https://github.com/vivek-0509/git-workflow-assignment
+
+Format: command  ->  why I ran it / what it did in this project
+
+
+[1] Setting up StudyLog locally
+
+git init -b main
+  -> Turned the StudyLog folder into a Git repo. "-b main" names the first
+     branch main, so I did not have to rename master later.
+
+git status -s
+  -> Short status. Here it showed index.html and about.html as "??"
+     (present on disk but not yet tracked).
+
+git add index.html about.html
+  -> Put both pages in the staging area for the first snapshot.
+
+git commit -m "StudyLog v0: home page and about page"
+  -> Saved the starting point of the site as the root commit (6672449).
+
+
+[2] Commits, branching and merging
+
+git diff --stat
+  -> Before committing, checked how much I had changed: 6 new lines in
+     index.html (the weekly targets list).
+
+git commit -m "Home: list this week's study targets"
+  -> Second commit on main, after staging index.html again with git add.
+
+git branch feature
+  -> Made a branch called feature at the same commit as main, to build the
+     courses page without touching main.
+
+git branch
+  -> Confirmed both branches exist; the "*" showed I was still on main.
+
+git switch feature
+  -> Moved onto the feature branch (newer, clearer form of git checkout).
+
+git add courses.html / git add index.html
+  -> Staged the new courses page, then the nav link change, one at a time,
+     so each became its own commit.
+
+git commit -m "Feature: add courses page with upcoming deadlines"
+git commit -m "Feature: link About and Courses from the home page"
+  -> Two commits that exist only on feature until the merge.
+
+git log --oneline --graph
+  -> Quick check on feature: four commits, the last two being feature work.
+
+git switch main
+  -> Went back to main, where courses.html does not exist yet.
+
+git merge --no-ff feature -m "Merge feature branch: courses page and navigation"
+  -> Brought the feature work into main. --no-ff keeps a real merge commit
+     (c2e3ed1) so the branch shape stays visible in the graph and on GitHub.
+
+git log --oneline --graph --decorate --all
+  -> Printed every branch as a graph with branch labels, showing where
+     feature split off and where it joined main again.
+
+
+[3] Ignoring files
+
+cat .gitignore
+  -> Displayed my two rules: *.log and scratch/.
+
+git status -s --ignored
+  -> Ignored items show with "!!". live-server.log, browser-console.log and
+     scratch/ moved from "??" to "!!" after the .gitignore was added.
+
+git check-ignore -v live-server.log browser-console.log scratch/theme-ideas.txt
+  -> For each path, printed the exact .gitignore line that matches it
+     (line 2 for the logs, line 5 for scratch/).
+
+git commit -m "Ignore *.log files and the scratch/ folder"
+  -> Committed .gitignore so the rules travel with the repo.
+
+
+[4] Undoing a commit
+
+git commit -m "Home: add exam countdown banner"
+  -> The extra commit I then decided to undo (c4d51c3).
+
+git revert --no-edit HEAD
+  -> Undid c4d51c3 by adding a new commit (037ab4b) with the opposite change.
+     I chose revert over reset because the repo is pushed to GitHub, and revert
+     does not erase history. --no-edit keeps the default message.
+
+git log --oneline -3
+  -> Shows the banner commit and its revert one above the other.
+
+git diff HEAD~2 HEAD --stat
+  -> Compares the state before the banner with the state after the revert.
+     Empty output means the files are back exactly as they were.
+
+
+[5] Publishing to GitHub
+
+git remote add origin git@github.com:vivek-0509/git-workflow-assignment.git
+  -> Linked my local repo to the empty public GitHub repo, under the name
+     origin, using SSH.
+
+git remote -v
+  -> Checked that origin points at the right URL for both fetch and push.
+
+git push -u --force origin main
+git push -u --force origin feature
+  -> Uploaded both branches with all their history. -u remembers origin as
+     the upstream, so a plain "git push" works from now on. --force was
+     needed because an earlier draft of this repo was already on GitHub;
+     it replaces that old history with this final one.
+
+git branch -a
+  -> Lists local and remote branches; origin/main and origin/feature
+     confirm the push worked.
+
+
+[6] This file
+
+git add git_commands.txt
+git commit -m "Add command log for the assignment"
+  -> Committed this file so it is part of the repo and the submission.
